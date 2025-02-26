@@ -1,9 +1,16 @@
 import asyncio
+import logging
 import random
 
 from constants import DEFAULT_NUM_WORKERS, MAX_SIZE_QUE, RangeDelay, Status
 from decorators import retry
-from loggers import logger
+
+logging.basicConfig(
+    format="%(levelname)s - %(asctime)s - %(name)s - %(message)s",
+    level=logging.INFO,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class Order:
@@ -13,7 +20,7 @@ class Order:
         self.status = Status.PENDING.value
 
     def __str__(self):
-        return f'Заказ {self.order_id}: {self.description} - {self.status}'
+        return f"Заказ {self.order_id}: {self.description} - {self.status}"
 
 
 class Worker:
@@ -23,25 +30,28 @@ class Worker:
     @retry()
     async def _process_order(self, order):
         order.status = Status.IN_PROGRESS.value
-        logger.info(f'Worker {self.worker_id} начал обработку заказа: {order}')
+        logger.info(f"Worker {self.worker_id} начал обработку заказа: {order}")
 
         try:
             if random.random() < 0.3:
-                raise Exception('Тестовая ошибка!')
+                raise Exception("Тестовая ошибка!")
 
-            await asyncio.sleep(random.uniform(RangeDelay.MIN_DELAY.value,
-                                               RangeDelay.MAX_DELAY.value))
+            await asyncio.sleep(
+                random.uniform(
+                    RangeDelay.MIN_DELAY.value, RangeDelay.MAX_DELAY.value
+                )
+            )
             order.status = Status.DONE.value
             logger.info(
-                f'Worker {self.worker_id} завершил обработку заказа: {order}'
+                f"Worker {self.worker_id} завершил обработку заказа: {order}"
             )
         except Exception as e:
             order.status = Status.FAILED.value
             logger.error(
-                f'Worker {self.worker_id} ошибка при обработке заказа: '
-                f'{order}, {str(e)}',
-                exc_info=True
-                )
+                f"Worker {self.worker_id} ошибка при обработке заказа: "
+                f"{order}, {str(e)}",
+                exc_info=True,
+            )
 
     async def run(self, queue):
         while True:
@@ -67,7 +77,7 @@ class OrderProcessor:
 
     async def run(self, list_order):
         if not list_order:
-            logger.warning('Передан пустой список заказов!')
+            logger.warning("Передан пустой список заказов!")
 
         await self._start_workers()
 
@@ -81,11 +91,11 @@ class OrderProcessor:
 
 
 async def main():
-    order_list = [Order(i, f'Описание заказа {i}') for i in range(10)]
+    order_list = [Order(i, f"Описание заказа {i}") for i in range(10)]
     order_processor = OrderProcessor()
 
     await order_processor.run(order_list)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

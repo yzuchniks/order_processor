@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: main
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/PyCQA/isort
+    rev: main
+    hooks:
+      - id: isort
+        language_version: python3
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: main
+    hooks:
+      - id: flake8
+        language_version: python3
+        args:
+          - --max-line-length=79

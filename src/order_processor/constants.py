@@ -5,10 +5,10 @@ DEFAULT_NUM_WORKERS = 5
 
 
 class Status(Enum):
-    PENDING = 'Ожидает'
-    IN_PROGRESS = 'Выполняется'
-    DONE = 'Завершен'
-    FAILED = 'Ошибка при выполнении'
+    PENDING = "Ожидает"
+    IN_PROGRESS = "Выполняется"
+    DONE = "Завершен"
+    FAILED = "Ошибка при выполнении"
 
 
 class RangeDelay(Enum):

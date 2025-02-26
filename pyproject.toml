@@ -1,0 +1,34 @@
+[project]
+name = "order-processor"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Sergey Morgunov",email = "Bo-Jack-Bo@yandex.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+isort = "^6.0.0"
+flake8 = "^7.1.2"
+pre-commit = "^4.1.0"
+
+
+[tool.black]
+line-length = 79
+target-version = ['py39']
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = ["E203", "W503"]
