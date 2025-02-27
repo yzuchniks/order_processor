@@ -2,13 +2,14 @@ import asyncio
 import logging
 import random
 
-from constants import DEFAULT_NUM_WORKERS, MAX_SIZE_QUE, RangeDelay, Status
-from decorators import retry
-
-logging.basicConfig(
-    format="%(levelname)s - %(asctime)s - %(name)s - %(message)s",
-    level=logging.INFO,
+from src.orders.constants import (
+    CHANCE_ERROR,
+    DEFAULT_NUM_WORKERS,
+    MAX_SIZE_QUE,
+    RangeDelay,
+    Status,
 )
+from src.orders.decorators import retry
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class Worker:
         logger.info(f"Worker {self.worker_id} начал обработку заказа: {order}")
 
         try:
-            if random.random() < 0.3:
+            if random.random() < CHANCE_ERROR:
                 raise Exception("Тестовая ошибка!")
 
             await asyncio.sleep(
@@ -52,6 +53,7 @@ class Worker:
                 f"{order}, {str(e)}",
                 exc_info=True,
             )
+            raise
 
     async def run(self, queue):
         while True:
@@ -72,9 +74,6 @@ class OrderProcessor:
             worker = Worker(worker_id)
             self.workers.append(asyncio.create_task(worker.run(self.queue)))
 
-    async def _add_order(self, order):
-        await self.queue.put(order)
-
     async def run(self, list_order):
         if not list_order:
             logger.warning("Передан пустой список заказов!")
@@ -82,20 +81,9 @@ class OrderProcessor:
         await self._start_workers()
 
         for order in list_order:
-            await self._add_order(order)
+            await self.queue.put(order)
 
         for _ in range(self.num_workers):
             await self.queue.put(None)
 
         await asyncio.gather(*self.workers)
-
-
-async def main():
-    order_list = [Order(i, f"Описание заказа {i}") for i in range(10)]
-    order_processor = OrderProcessor()
-
-    await order_processor.run(order_list)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

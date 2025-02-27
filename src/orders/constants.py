@@ -2,6 +2,7 @@ from enum import Enum
 
 MAX_SIZE_QUE = 50
 DEFAULT_NUM_WORKERS = 5
+CHANCE_ERROR = 0.3
 
 
 class Status(Enum):
@@ -17,5 +18,5 @@ class RangeDelay(Enum):
 
 
 class Retry(Enum):
-    MAX_RETRIES = 3
+    DEFAULT_RETRIES = 3
     DELAY = 1

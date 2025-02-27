@@ -2,13 +2,13 @@ import asyncio
 import functools
 import logging
 
-from constants import Retry
+from src.orders.constants import Retry
 
 logger = logging.getLogger(__name__)
 
 
 def retry(
-    max_retries=Retry.MAX_RETRIES.value,
+    max_retries=Retry.DEFAULT_RETRIES.value,
     delay=Retry.DELAY.value,
     exceptions=(Exception,),
 ):
